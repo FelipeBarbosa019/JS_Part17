@@ -91,11 +91,12 @@ input {
 
 .container3{
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    flex-direction: column;
     width: 30%;
+    margin-bottom: 40px;
 }
 
 #day1 {
@@ -117,12 +118,15 @@ input {
     background-color: rgb(17, 17, 63);
     border-radius: 5px 5px 5px 5px;
     opacity: 0.8;
-    text-align: center;
     margin-top: 20px;
     margin-bottom: 50px;
     padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
-
 
 /* --------------- Footer --------------- */
 footer{

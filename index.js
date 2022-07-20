@@ -8,17 +8,17 @@ const dateAns = document.querySelector('#date')
 const Tmax = document.querySelector('#Tmax')
 const Tmin = document.querySelector('#Tmin')
 
-//Morning
+//Morning day1:
 const icon = document.querySelector('#icon')
 const period = document.querySelector('#period')
 const resume = document.querySelector('#resume')
 
-//Afternoon
+//Afternoon day1:
 const icon2 = document.querySelector('#icon2')
 const period2 = document.querySelector('#period2')
 const resume2 = document.querySelector('#resume2')
 
-//Night
+//Night day1:
 const icon3 = document.querySelector('#icon3')
 const period3 = document.querySelector('#period3')
 const resume3 = document.querySelector('#resume3')
@@ -73,32 +73,35 @@ uf.addEventListener('change', loadCity)
 city.addEventListener('change', (e)=>{loadWeather(e.target.value)})
 
 function loadUF(){
-    fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
-    .then(response => {
-        document.querySelector("body").style.cursor = "wait";
-        if (response.status===200){
-            document.querySelector("body").style.cursor = "auto";
-            return response.json();
-        }
-    }) 
-    .then(data => {
-        const options = document.createElement("optgroup")
-        options.setAttribute("label","Estados")
-        data.forEach(function(uf){
-            options.innerHTML += '<option>'+uf.sigla+'</option>'
+    return new Promise((resolve, reject) => {
+        fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
+        .then(response => {
+            if (response.status===200){
+                document.querySelector("body").style.cursor = "auto";
+                return response.json();
+            }
+            return promise.reject("Falha ao requisitar os dados")
+        }) 
+        .then(data => {
+            const options = document.createElement("optgroup")
+            options.setAttribute("label","Estados")
+            data.forEach(function(uf){
+                options.innerHTML += '<option>'+uf.sigla+'</option>'
+            })
+            uf.append(options)  
         })
-        uf.append(options)  
+        .then(data => {
+            resolve(data)
+        })
+        .catch((error) => {
+            reject(error)
+        }) 
     })
-    .catch((error) => {
-        console.log(error)
-        document.querySelector("body").style.cursor = "auto";
-    })  
 }
 
 function loadCity(){
-   fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf.value}/municipios`)
+    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf.value}/municipios`)
    .then(response => {
-    document.querySelector("body").style.cursor = "wait";
     if (response.status===200){
         document.querySelector("body").style.cursor = "auto";
         return response.json();
@@ -120,7 +123,6 @@ function loadCity(){
 function loadWeather(id){
     fetch(`https://apiprevmet3.inmet.gov.br/previsao/${id}`)
     .then(response => {
-    document.querySelector("body").style.cursor = "wait";
     if (response.status===200){
         document.querySelector("body").style.cursor = "auto";
         return response.json();
@@ -133,8 +135,6 @@ function loadWeather(id){
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         const currentDate = day + '/' + month + '/' + year;
-        console.log(currentDate)
-        console.log(data)
 
         dateAns.innerHTML = "Data: " + currentDate
         dayWeek.innerHTML = "Dia da semana:     " + data[id][currentDate]["manha"]["dia_semana"]
@@ -142,7 +142,7 @@ function loadWeather(id){
         Tmin.innerHTML = "Tmin: " + data[id][currentDate]["manha"]["temp_min"]
         
         //Morning:
-        period.innerHTML = "Perídoo da manhã:"
+        period.innerHTML = "Período da manhã:"
         icon.src = data[id][currentDate]["manha"]["icone"]
         resume.innerHTML = "Resumo: " + data[id][currentDate]["manha"]["resumo"]
 
@@ -171,7 +171,7 @@ function loadWeather(id){
         Tmin2.innerHTML = "Tmin: " + data[id][currentDate2]["manha"]["temp_min"]
         
         //Morning:
-        period21.innerHTML = "Perídoo da manhã:"
+        period21.innerHTML = "Período da manhã:"
         icon21.src = data[id][currentDate2]["manha"]["icone"]
         resume21.innerHTML = "Resumo: " + data[id][currentDate2]["manha"]["resumo"]
 
@@ -184,7 +184,6 @@ function loadWeather(id){
         period23.innerHTML = "Período da noite:"
         icon23.src = data[id][currentDate2]["noite"]["icone"]
         resume23.innerHTML = "Resumo: " + data[id][currentDate2]["noite"]["resumo"]
-
 
         //Day3:
         const date3 = new Date();
@@ -200,7 +199,6 @@ function loadWeather(id){
         Tmin3.innerHTML = "Tmin: " + data[id][currentDate3]["temp_min"]
         icon31.src = data[id][currentDate3]["icone"]
         resume31.innerHTML = "Resumo: " + data[id][currentDate3]["resumo"]
-
     })
     .catch((error) => {
         console.log(error)
